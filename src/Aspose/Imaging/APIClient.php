@@ -128,8 +128,22 @@ class APIClient {
 //		}
 
         if ($method == self::$POST) {
-            curl_setopt($curl, CURLOPT_POST, true);
-            curl_setopt($curl, CURLOPT_POSTFIELDS, $postData);
+            if (file_exists($postData)) {
+
+                $fp = fopen($postData, "r");
+
+                curl_setopt($curl, CURLOPT_VERBOSE, 1);
+                curl_setopt($curl, CURLOPT_USERPWD, 'user:password');
+                curl_setopt($curl, CURLOPT_URL, $url);
+                curl_setopt($curl, CURLOPT_UPLOAD, true);
+                curl_setopt($curl, CURLOPT_CUSTOMREQUEST, 'POST');
+                curl_setopt($curl, CURLOPT_HTTPHEADER, array("Content-Type: application/json"));
+                curl_setopt($curl, CURLOPT_INFILE, $fp);
+                curl_setopt($curl, CURLOPT_INFILESIZE, filesize($postData));
+            } else {    
+                curl_setopt($curl, CURLOPT_POST, true);
+                curl_setopt($curl, CURLOPT_POSTFIELDS, $postData);
+            }
         } else if ($method == self::$PUT) {
             if (file_exists($postData)) {
 
